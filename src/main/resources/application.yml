@@ -14,6 +14,6 @@ spring:
     password: postgres
 
 kafka:
-  bootstrap-servers: "localhost"
+  bootstrap-servers: "PLAINTEXT://localhost:9092"
   transaction-id: "your-unique-id"
 
