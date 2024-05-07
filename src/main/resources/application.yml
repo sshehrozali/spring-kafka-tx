@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: bank-app
+
+kafka:
+  bootstrap-servers: "localhost"
+  transaction-id: "your-unique-id"
+
