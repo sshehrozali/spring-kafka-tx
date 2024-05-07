@@ -17,10 +17,10 @@ import org.springframework.transaction.support.AbstractPlatformTransactionManage
 @Configuration
 @EnableTransactionManagement
 class KafkaConfig(@Value("\${kafka.bootstrap-servers}") private val bootstrapServers: String,
-    @Value("\${kafka.transaction-id}") private val kafkaTransactionId: String) {
+                  @Value("\${kafka.transaction-id}") private val kafkaTransactionId: String) {
 
   @Bean("transferConfirmedEventProducerFactory")
-  fun transferConfirmedEventProducerFactory(producerFactory: ProducerFactory<String, TransferConfirmed>) : ProducerFactory<String, TransferConfirmed> {
+  fun transferConfirmedEventProducerFactory(producerFactory: ProducerFactory<String, TransferConfirmed>): ProducerFactory<String, TransferConfirmed> {
     val configProps: MutableMap<String, Any> = HashMap()
     configProps[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
     configProps[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
