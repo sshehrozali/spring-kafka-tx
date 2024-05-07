@@ -1,6 +1,7 @@
 package com.bank.app.config
 
 import com.bank.app.event.TransferConfirmed
+import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Qualifier
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Lazy
+import org.springframework.kafka.config.TopicBuilder
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
@@ -42,5 +44,13 @@ class KafkaConfig(@Value("\${kafka.bootstrap-servers}") private val bootstrapSer
   fun transferConfirmedKafkaTemplate(@Qualifier("transferConfirmedEventProducerFactory") transferConfirmedEventProducerFactory: ProducerFactory<String, TransferConfirmed>):
       KafkaTemplate<String, TransferConfirmed> {
     return KafkaTemplate(transferConfirmedEventProducerFactory)
+  }
+
+  @Bean
+  fun transfersTopic(): NewTopic {
+    return TopicBuilder.name("transfers")
+        .partitions(1)
+        .replicas(1)
+        .build()
   }
 }
