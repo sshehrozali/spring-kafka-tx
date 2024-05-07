@@ -16,4 +16,3 @@ spring:
 kafka:
   bootstrap-servers: "localhost"
   transaction-id: "your-unique-id"
-
