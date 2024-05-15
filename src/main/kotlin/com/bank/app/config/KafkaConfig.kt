@@ -32,13 +32,13 @@ class KafkaConfig(@Value("\${kafka.bootstrap-servers}") private val bootstrapSer
     return DefaultKafkaProducerFactory<String, TransferConfirmed>(configProps)
   }
 
-  @Bean("transferConfirmedKafkaTransactionManager")
-  fun transferConfirmedKafkaTransactionManager(@Qualifier("transferConfirmedEventProducerFactory") transferConfirmedEventProducerFactory: ProducerFactory<String, TransferConfirmed>):
-      KafkaTransactionManager<String, TransferConfirmed> {
-    val kafkaTransactionManager = KafkaTransactionManager<String, TransferConfirmed>(transferConfirmedEventProducerFactory)
-    kafkaTransactionManager.transactionSynchronization = AbstractPlatformTransactionManager.SYNCHRONIZATION_ON_ACTUAL_TRANSACTION
-    return kafkaTransactionManager
-  }
+//  @Bean("transferConfirmedKafkaTransactionManager")
+//  fun transferConfirmedKafkaTransactionManager(@Qualifier("transferConfirmedEventProducerFactory") transferConfirmedEventProducerFactory: ProducerFactory<String, TransferConfirmed>):
+//      KafkaTransactionManager<String, TransferConfirmed> {
+//    val kafkaTransactionManager = KafkaTransactionManager<String, TransferConfirmed>(transferConfirmedEventProducerFactory)
+//    kafkaTransactionManager.transactionSynchronization = AbstractPlatformTransactionManager.SYNCHRONIZATION_ON_ACTUAL_TRANSACTION
+//    return kafkaTransactionManager
+//  }
 
   @Bean("transferConfirmedKafkaTemplate")
   fun transferConfirmedKafkaTemplate(@Qualifier("transferConfirmedEventProducerFactory") transferConfirmedEventProducerFactory: ProducerFactory<String, TransferConfirmed>):

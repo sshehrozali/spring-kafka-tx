@@ -18,8 +18,10 @@ import kotlin.math.log
 
 @Service
 @Slf4j
-class TransferService(private val transferRepository: TransferRepository,
-                      @Qualifier("transferConfirmedKafkaTemplate") private val transferConfirmedKafkaTemplate: KafkaTemplate<String, TransferConfirmed>) {
+class TransferService(
+  private val transferRepository: TransferRepository,
+  @Qualifier("transferConfirmedKafkaTemplate") private val transferConfirmedKafkaTemplate: KafkaTemplate<String, TransferConfirmed>
+) {
 
   private val log = LoggerFactory.getLogger(TransferService::class.java)
   private final val transfersTopic = "TRANSFERS"
@@ -27,25 +29,26 @@ class TransferService(private val transferRepository: TransferRepository,
   @Transactional
   fun confirmTransfers(transferIds: List<String>): Int {
     transferIds
-        .forEach { transferId ->
-          transferRepository.findByTransferId(UUID.fromString(transferId))
-              .ifPresent { transfer ->
-                try {
-                  if (transfer.status == TransferStatus.CONFIRMED) {
-                    log.info("Skipping transferId: $transferId because it's already confirmed")
-                  } else {
-                    transfer.status = TransferStatus.CONFIRMED
-                    transferRepository.save(transfer)
+      .forEach { transferId ->
+        transferRepository.findByTransferId(UUID.fromString(transferId))
+          .ifPresent { transfer ->
+            log.info("Performing update operation...")
+            try {
+              if (transfer.status == TransferStatus.CONFIRMED) {
+                log.info("Skipping transferId: $transferId because it's already confirmed")
+              } else {
+                transfer.status = TransferStatus.CONFIRMED
+                transferRepository.save(transfer)
 
-                    val event = TransferConfirmed(transferId, Instant.now())
-                    transferConfirmedKafkaTemplate.send(transfersTopic, transferId, event)
-                  }
-                } catch (e: Exception) {
-                  log.error("Transfer confirmation operation failed at transferId: $transferId. Operation rolled back successfully.$e")
-                  throw FailedToProcessTransferConfirmation()
-                }
+                val event = TransferConfirmed(transferId, Instant.now())
+                transferConfirmedKafkaTemplate.send(transfersTopic, transferId, event)
               }
-        }
+            } catch (e: Exception) {
+              log.error("Transfer confirmation operation failed at transferId: $transferId. Operation rolled back successfully.$e")
+              throw FailedToProcessTransferConfirmation()
+            }
+          }
+      }
     return transferIds.size
   }
 }

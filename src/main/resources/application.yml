@@ -7,13 +7,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
   datasource:
     url: jdbc:postgresql://localhost:5432/bank_app_db
     username: postgres
     password: postgres
 
 kafka:
-  bootstrap-servers: PLAINTEXT_HOST://localhost:9093,PLAINTEXT_HOST://localhost:9094,PLAINTEXT_HOST://localhost:9095
+  bootstrap-servers: localhost:29092
   transaction-id: "your-unique-id"
 
