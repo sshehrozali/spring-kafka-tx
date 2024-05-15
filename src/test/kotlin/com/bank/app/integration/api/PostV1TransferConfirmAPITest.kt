@@ -1,7 +1,9 @@
 package com.bank.app.integration.api
 
 import com.bank.app.CoreApplication
+import com.bank.app.entity.Transfer
 import com.bank.app.model.TransferConfirmRequest
+import com.bank.app.model.TransferStatus
 import com.bank.app.repository.TransferRepository
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -25,14 +27,22 @@ class PostV1TransferConfirmAPITest(
   @Autowired private val transferRepository: TransferRepository
 ) {
 
+  private val transferId1 = UUID.randomUUID()
+  private val transferId2 = UUID.randomUUID()
+
   @BeforeEach
   fun setup() {
     transferRepository.deleteAll()
+    val savedTransfers = listOf(
+      Transfer(transferId = transferId1, status = TransferStatus.PENDING),
+      Transfer(transferId = transferId2, status = TransferStatus.PENDING)
+    )
+    transferRepository.saveAll(savedTransfers)
   }
 
   @Test
   fun `should update transfers record in db with status marked as CONFIRMED and emit event`() {
-    val requestDTO = TransferConfirmRequest(listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString()))
+    val requestDTO = TransferConfirmRequest(listOf(transferId1.toString(), transferId2.toString()))
     val requestBody = objectMapper.writeValueAsString(requestDTO)
 
     println("request body: $requestBody")

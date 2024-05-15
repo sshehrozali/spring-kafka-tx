@@ -44,7 +44,7 @@ class TransferService(
                 transferConfirmedKafkaTemplate.send(transfersTopic, transferId, event)
               }
             } catch (e: Exception) {
-              log.error("Transfer confirmation operation failed at transferId: $transferId. Operation rolled back successfully.$e")
+              log.error("Transfer confirmation operation failed at transferId: $transferId. Operation rolled back successfully. $e")
               throw FailedToProcessTransferConfirmation()
             }
           }
