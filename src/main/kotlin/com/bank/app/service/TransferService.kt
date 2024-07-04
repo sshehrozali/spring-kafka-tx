@@ -1,6 +1,6 @@
 package com.bank.app.service
 
-import com.bank.app.event.TransferConfirmed
+import com.bank.app.event.NewIncomingTransfer
 import com.bank.app.exception.FailedToProcessTransferConfirmation
 import com.bank.app.model.TransferStatus
 import com.bank.app.repository.TransferRepository
@@ -13,14 +13,12 @@ import org.springframework.transaction.annotation.Transactional
 import java.lang.Exception
 import java.time.Instant
 import java.util.*
-import java.util.logging.Logger
-import kotlin.math.log
 
 @Service
 @Slf4j
 class TransferService(
   private val transferRepository: TransferRepository,
-  @Qualifier("transferConfirmedKafkaTemplate") private val transferConfirmedKafkaTemplate: KafkaTemplate<String, TransferConfirmed>
+  @Qualifier("transferConfirmedKafkaTemplate") private val newIncomingTransferKafkaTemplate: KafkaTemplate<String, NewIncomingTransfer>
 ) {
 
   private val log = LoggerFactory.getLogger(TransferService::class.java)
@@ -40,8 +38,9 @@ class TransferService(
                 transfer.status = TransferStatus.CONFIRMED
                 transferRepository.save(transfer)
 
-                val event = TransferConfirmed(transferId, Instant.now())
-                transferConfirmedKafkaTemplate.send(transfersTopic, transferId, event)
+                val event = NewIncomingTransfer(transferId, Instant.now())
+                newIncomingTransferKafkaTemplate.send(transfersTopic, transferId, event)
+                newIncomingTransferKafkaTemplate.executeInTransaction {  }
               }
             } catch (e: Exception) {
               log.error("Transfer confirmation operation failed at transferId: $transferId. Operation rolled back successfully. $e")

@@ -12,7 +12,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/bank_app_db
     username: postgres
     password: postgres
+  kafka:
+    producer:
+      transaction-id-prefix: tx-
 
 kafka:
   bootstrap-servers: localhost:29092
-  transaction-id: "your-unique-id"
