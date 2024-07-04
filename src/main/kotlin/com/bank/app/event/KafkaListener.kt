@@ -8,16 +8,16 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 @Slf4j
-class IncomingTransferReceiver {
+class KafkaListener {
 
-  private val log = LoggerFactory.getLogger(IncomingTransferReceiver::class.java)
+  private val log = LoggerFactory.getLogger(KafkaListener::class.java)
   @KafkaListener(
-    groupId = "incoming-transfers-receivers",
-    containerFactory = "",
-    topics = ["money"]
+    groupId = "unique-group-id",
+    containerFactory = "concurrentKafkaListenerContainerFactory",
+    topics = ["payments"]
   )
   @Transactional("transactionManager")
-  fun listen(event: NewIncomingTransfer) {
+  fun listen(event: String) {
     log.info("Received message: $event")
   }
 }
