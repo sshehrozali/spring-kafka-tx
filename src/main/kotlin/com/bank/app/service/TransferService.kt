@@ -18,7 +18,6 @@ import java.util.*
 @Slf4j
 class TransferService(
   private val transferRepository: TransferRepository,
-  @Qualifier("transferConfirmedKafkaTemplate") private val newIncomingTransferKafkaTemplate: KafkaTemplate<String, NewIncomingTransfer>
 ) {
 
   private val log = LoggerFactory.getLogger(TransferService::class.java)
@@ -38,9 +37,9 @@ class TransferService(
                 transfer.status = TransferStatus.CONFIRMED
                 transferRepository.save(transfer)
 
-                val event = NewIncomingTransfer(transferId, Instant.now())
-                newIncomingTransferKafkaTemplate.send(transfersTopic, transferId, event)
-                newIncomingTransferKafkaTemplate.executeInTransaction {  }
+//                val event = NewIncomingTransfer(transferId, Instant.now())
+//                newIncomingTransferKafkaTemplate.send(transfersTopic, transferId, event)
+//                newIncomingTransferKafkaTemplate.executeInTransaction {  }
               }
             } catch (e: Exception) {
               log.error("Transfer confirmation operation failed at transferId: $transferId. Operation rolled back successfully. $e")
